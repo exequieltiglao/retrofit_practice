@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
+    private ApiInterface apiInterface;
     private TextView tvResult;
     public static final String BASE_URL = "https://jsonplaceholder.typicode.com/";
 
@@ -32,8 +33,15 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        apiInterface = retrofit.create(ApiInterface.class);
 
+//        getPhotos();
+
+        getComments();
+
+    }
+
+    private void getPhotos() {
         Call<List<Photos>> call = apiInterface.getPhotos();
 
         call.enqueue(new Callback<List<Photos>>() {
@@ -70,4 +78,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void  getComments() {
+        Call<List<Comments>> call = apiInterface.getComments(3);
+
+        call.enqueue(new Callback<List<Comments>>() {
+            @Override
+            public void onResponse(Call<List<Comments>> call, Response<List<Comments>> response) {
+                /* checks if json response is successful **/
+                if (!response.isSuccessful()) {
+                    tvResult.setText("Code: " + response.code());
+                    Log.d(TAG, "response.... " + response.code());
+                    return;
+                }
+
+                List<Comments> comments = response.body();
+
+                for (Comments comments1 : comments) {
+
+                String content = "";
+                    content += "PostId: " + comments1.getPostId() + "\n";
+                    content += "Id: " + comments1.getId() + "\n";
+                    content += "Name: " + comments1.getName() + "\n";
+                    content += "Email: " + comments1.getEmail() + "\n";
+                    content += "Body: " + comments1.getBody() + "\n\n";
+
+                    tvResult.append(content);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Comments>> call, Throwable t) {
+                tvResult.setText(t.getMessage());
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+
+
+    }
 }
