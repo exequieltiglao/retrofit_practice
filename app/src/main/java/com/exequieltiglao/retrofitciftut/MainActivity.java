@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Photos>> call, Response<List<Photos>> response) {
 
+                /* checks if json response is successful **/
                 if (!response.isSuccessful()) {
                     tvResult.setText("Code: " + response.code());
                     Log.d(TAG, "response.... " + response.code());
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
                 List<Photos> posts = response.body();
 
+                /* gets the data in the web service then displays it on app */
                 for (Photos posts1 : posts) {
                     String content = "";
                     content += "AlbumId: " + posts1.getAlbumId() + "\n";
